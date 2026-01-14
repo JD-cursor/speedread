@@ -18,15 +18,16 @@ export function WordRenderer({
 }: WordRendererProps) {
   const { measureText } = useTextMeasure(fontFamily, fontSize, 500)
   
-  const { left, orp, right, leftWidth } = useMemo(() => {
+  const { left, orp, right, leftWidth, orpWidth } = useMemo(() => {
     if (!token || token.type === 'break') {
-      return { left: '', orp: '', right: '', leftWidth: 0 }
+      return { left: '', orp: '', right: '', leftWidth: 0, orpWidth: 0 }
     }
     
     const parts = getOrpLetter(token.display, token.orpIndex)
     const leftWidth = measureText(parts.left)
+    const orpWidth = measureText(parts.orp)
     
-    return { ...parts, leftWidth }
+    return { ...parts, leftWidth, orpWidth }
   }, [token, measureText])
   
   if (!token) {
@@ -48,40 +49,41 @@ export function WordRenderer({
   const containerWidth = 800
   const anchorX = containerWidth * ORP_ANCHOR_POSITION
   const translateX = anchorX - leftWidth
+  const tickX = anchorX + orpWidth / 2
   
-  const tickHeight = 20
-  const gapFromText = 6
+  const tickHeight = 28
+  const lineOffset = 58
   
   return (
     <div className="relative h-32 overflow-hidden" style={{ width: containerWidth }}>
       {/* Top horizontal guide line */}
       <div 
         className="absolute left-0 right-0 h-px bg-reader-guide"
-        style={{ top: `calc(50% - ${fontSize / 2 + gapFromText}px)` }}
+        style={{ top: `calc(50% - ${lineOffset}px)` }}
       />
       
       {/* Bottom horizontal guide line */}
       <div 
         className="absolute left-0 right-0 h-px bg-reader-guide"
-        style={{ top: `calc(50% + ${fontSize / 2 + gapFromText}px)` }}
+        style={{ top: `calc(50% + ${lineOffset}px)` }}
       />
       
-      {/* Top vertical tick (stops above the text) */}
+      {/* Top vertical tick (goes DOWN from top line toward text) */}
       <div 
         className="absolute w-px bg-reader-guide"
         style={{ 
-          left: anchorX,
-          top: `calc(50% - ${fontSize / 2 + gapFromText}px - ${tickHeight}px)`,
+          left: tickX,
+          top: `calc(50% - ${lineOffset}px)`,
           height: tickHeight,
         }}
       />
       
-      {/* Bottom vertical tick (starts below the text) */}
+      {/* Bottom vertical tick (goes UP from bottom line toward text) */}
       <div 
         className="absolute w-px bg-reader-guide"
         style={{ 
-          left: anchorX,
-          top: `calc(50% + ${fontSize / 2 + gapFromText}px)`,
+          left: tickX,
+          top: `calc(50% + ${lineOffset}px - ${tickHeight}px)`,
           height: tickHeight,
         }}
       />
