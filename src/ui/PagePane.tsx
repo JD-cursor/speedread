@@ -9,8 +9,8 @@ interface PagePaneProps {
   onSeek: (index: number) => void
 }
 
-const ESTIMATED_LINE_HEIGHT = 28
-const WORDS_PER_LINE = 12
+const LINE_HEIGHT = 32
+const WORDS_PER_LINE = 10
 
 export function PagePane({ tokens, currentIndex, onSeek }: PagePaneProps) {
   const parentRef = useRef<HTMLDivElement>(null)
@@ -21,8 +21,8 @@ export function PagePane({ tokens, currentIndex, onSeek }: PagePaneProps) {
   const virtualizer = useVirtualizer({
     count: lines.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => ESTIMATED_LINE_HEIGHT,
-    overscan: 10,
+    estimateSize: () => LINE_HEIGHT,
+    overscan: 5,
   })
   
   const currentWordIndex = getCurrentWordIndex(tokens, currentIndex)
@@ -76,7 +76,7 @@ export function PagePane({ tokens, currentIndex, onSeek }: PagePaneProps) {
                 height: `${virtualRow.size}px`,
                 transform: `translateY(${virtualRow.start}px)`,
               }}
-              className="flex flex-wrap gap-x-1.5 gap-y-0.5 items-baseline leading-relaxed"
+              className="flex items-center gap-x-2 overflow-hidden text-sm"
             >
               {line.map((token, idx) => {
                 const globalWordIndex = lineStartIndex + idx

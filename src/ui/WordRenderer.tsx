@@ -49,18 +49,41 @@ export function WordRenderer({
   const anchorX = containerWidth * ORP_ANCHOR_POSITION
   const translateX = anchorX - leftWidth
   
+  const tickHeight = 20
+  const gapFromText = 6
+  
   return (
     <div className="relative h-32 overflow-hidden" style={{ width: containerWidth }}>
-      {/* Vertical guide line through ORP */}
+      {/* Top horizontal guide line */}
       <div 
-        className="absolute top-0 bottom-0 w-px bg-reader-guide"
-        style={{ left: anchorX }}
+        className="absolute left-0 right-0 h-px bg-reader-guide"
+        style={{ top: `calc(50% - ${fontSize / 2 + gapFromText}px)` }}
       />
       
-      {/* Horizontal guide line */}
+      {/* Bottom horizontal guide line */}
       <div 
-        className="absolute left-0 right-0 h-px bg-reader-guide opacity-50"
-        style={{ top: '50%' }}
+        className="absolute left-0 right-0 h-px bg-reader-guide"
+        style={{ top: `calc(50% + ${fontSize / 2 + gapFromText}px)` }}
+      />
+      
+      {/* Top vertical tick (stops above the text) */}
+      <div 
+        className="absolute w-px bg-reader-guide"
+        style={{ 
+          left: anchorX,
+          top: `calc(50% - ${fontSize / 2 + gapFromText}px - ${tickHeight}px)`,
+          height: tickHeight,
+        }}
+      />
+      
+      {/* Bottom vertical tick (starts below the text) */}
+      <div 
+        className="absolute w-px bg-reader-guide"
+        style={{ 
+          left: anchorX,
+          top: `calc(50% + ${fontSize / 2 + gapFromText}px)`,
+          height: tickHeight,
+        }}
       />
       
       {/* Word container */}

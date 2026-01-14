@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { 
@@ -19,8 +19,8 @@ import {
   updateDocumentTitle,
   exportLibrary, 
   importLibrary,
-  getProgress 
 } from '../storage/documentsRepo'
+import { db } from '../storage/db'
 import { Document, ReadingProgress } from '../core/types'
 import { ingestFile } from '../ingest/ingest'
 import clsx from 'clsx'
@@ -36,19 +36,17 @@ export function LibraryView() {
   const [editTitle, setEditTitle] = useState('')
   
   const documents = useLiveQuery(() => getAllDocuments(), [])
-  const [progressMap, setProgressMap] = useState<Record<string, ReadingProgress>>({})
   
-  useLiveQuery(async () => {
-    if (!documents) return
+  const allProgress = useLiveQuery(() => db.progress.toArray(), [])
+  
+  const progressMap = useMemo(() => {
+    if (!allProgress) return {}
     const map: Record<string, ReadingProgress> = {}
-    for (const doc of documents) {
-      const progress = await getProgress(doc.id)
-      if (progress) {
-        map[doc.id] = progress
-      }
+    for (const progress of allProgress) {
+      map[progress.documentId] = progress
     }
-    setProgressMap(map)
-  }, [documents])
+    return map
+  }, [allProgress])
   
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
