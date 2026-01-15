@@ -221,7 +221,7 @@ export function LibraryView() {
                   : "text-gray-400 hover:text-white"
               )}
             >
-              Website
+              Document / Book
             </button>
           </div>
         </div>
