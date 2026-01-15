@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Share2, BookOpen, Maximize, Minimize } from 'lucide-react'
+import { ArrowLeft, Share2, Maximize, Minimize } from 'lucide-react'
 import { WordRenderer } from './WordRenderer'
 import { Controls } from './Controls'
-import { PagePane } from './PagePane'
+import { TextFlow } from './TextFlow'
 import { useReaderEngine } from './hooks/useReaderEngine'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { getDocument, getProgress, updateProgress, generateShareUrl } from '../storage/documentsRepo'
@@ -17,9 +17,10 @@ export function ReaderView() {
   const [document, setDocument] = useState<Document | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showPagePane, setShowPagePane] = useState(true)
   const [fontSize, setFontSize] = useState(64)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  // Controls are always visible in the immersive layout
+  const showControls = true
   
   const initialPosition = useMemo(() => {
     const pos = searchParams.get('pos')
@@ -171,56 +172,73 @@ export function ReaderView() {
   const currentToken = tokens[state.currentIndex] ?? null
   
   return (
-    <div className="h-screen flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+    <div className="h-screen flex flex-col bg-reader-bg overflow-hidden">
+      {/* Minimal floating header - fades into background */}
+      <header 
+        className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4"
+        style={{
+          background: 'linear-gradient(to bottom, rgba(14, 14, 16, 0.95) 0%, rgba(14, 14, 16, 0) 100%)',
+        }}
+      >
         <div className="flex items-center gap-4">
           <button
             onClick={handleBack}
-            className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+            className="p-2 rounded-lg text-reader-text-dim hover:text-reader-text hover:bg-white/5 transition-all duration-200"
             title="Back to Library (Esc)"
           >
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-lg font-medium truncate max-w-md">{document.title}</h1>
+          <h1 className="text-sm font-medium text-reader-text-dim truncate max-w-md">{document.title}</h1>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <button
             onClick={handleShare}
-            className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+            className="p-2 rounded-lg text-reader-text-dim hover:text-reader-text hover:bg-white/5 transition-all duration-200"
             title="Share position"
           >
-            <Share2 size={18} />
+            <Share2 size={16} />
           </button>
           <button
             onClick={toggleFullscreen}
-            className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+            className="p-2 rounded-lg text-reader-text-dim hover:text-reader-text hover:bg-white/5 transition-all duration-200"
             title="Toggle fullscreen (F)"
           >
-            {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
-          </button>
-          <button
-            onClick={() => setShowPagePane(!showPagePane)}
-            className={`p-2 rounded-lg transition-colors ${showPagePane ? 'bg-gray-800' : 'hover:bg-gray-800'}`}
-            title="Toggle page pane"
-          >
-            <BookOpen size={18} />
+            {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
           </button>
         </div>
       </header>
       
-      {/* Main content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Reader section */}
-        <div className={`flex-1 flex flex-col ${showPagePane ? 'border-r border-gray-800' : ''}`}>
-          {/* Word display area */}
-          <div className="flex-1 flex items-center justify-center bg-reader-bg">
+      {/* Main immersive canvas - split into left (word) and right (text flow) */}
+      <div className="flex-1 flex">
+        {/* Left side: Word display - positioned left of center */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="transform -translate-x-8">
             <WordRenderer token={currentToken} fontSize={fontSize} />
           </div>
-          
-          {/* Controls */}
-          <div className="p-4">
+        </div>
+        
+        {/* Right side: Text flow - Star Wars crawl style */}
+        <div className="w-[400px] flex-shrink-0">
+          <TextFlow
+            tokens={tokens}
+            currentIndex={state.currentIndex}
+            onSeek={seekTo}
+          />
+        </div>
+      </div>
+      
+      {/* Floating controls at bottom - fades into background */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 z-20"
+        style={{
+          background: 'linear-gradient(to top, rgba(14, 14, 16, 0.95) 0%, rgba(14, 14, 16, 0) 100%)',
+        }}
+      >
+        <div 
+          className={`transition-all duration-300 ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
+        >
+          <div className="max-w-3xl mx-auto px-6 py-6">
             <Controls
               state={state.state}
               settings={state.settings}
@@ -241,17 +259,6 @@ export function ReaderView() {
             />
           </div>
         </div>
-        
-        {/* Page pane */}
-        {showPagePane && (
-          <div className="w-96 flex-shrink-0">
-            <PagePane
-              tokens={tokens}
-              currentIndex={state.currentIndex}
-              onSeek={seekTo}
-            />
-          </div>
-        )}
       </div>
     </div>
   )

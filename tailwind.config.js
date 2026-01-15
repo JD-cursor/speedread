@@ -7,11 +7,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        'reader-bg': '#0a0a0a',
-        'reader-text': '#d4d4d4',
-        'reader-orp': '#c45c5c',
-        'reader-guide': '#3a3a3a',
-        'reader-highlight': 'rgba(196, 92, 92, 0.2)',
+        // Immersive dark canvas - not pitch black, slightly warm
+        'reader-bg': '#0E0E10',
+        'reader-bg-subtle': '#141417',
+        // Softer text colors for comfortable reading
+        'reader-text': '#c8c8cc',
+        'reader-text-dim': '#707078',
+        'reader-text-muted': '#48484f',
+        // Muted accent for focus letter
+        'reader-orp': '#b85c5c',
+        // Subtle guide elements
+        'reader-guide': '#2a2a2f',
+        'reader-highlight': 'rgba(184, 92, 92, 0.15)',
       },
       fontFamily: {
         'reader': ['Georgia', 'Cambria', 'Times New Roman', 'serif'],

@@ -14,31 +14,19 @@ html, body, #root {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #0a0a0a;
-  color: #ffffff;
+  background-color: #0E0E10;
+  color: #c8c8cc;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Hide scrollbars for immersive experience */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  width: 0px;
+  height: 0px;
 }
 
 ::selection {
-  background-color: rgba(255, 51, 51, 0.3);
+  background-color: rgba(184, 92, 92, 0.3);
   color: #ffffff;
 }

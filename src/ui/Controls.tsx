@@ -55,115 +55,114 @@ export function Controls({
   const progress = totalTokens > 0 ? ((currentIndex + 1) / totalTokens) * 100 : 0
   
   return (
-    <div className="flex flex-col gap-4 p-4 bg-gray-900/50 rounded-xl backdrop-blur-sm">
-      {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+    <div className="flex flex-col gap-3">
+      {/* Progress bar - subtle, no container */}
+      <div className="w-full h-0.5 bg-white/10 rounded-full overflow-hidden">
         <div 
-          className="h-full bg-reader-orp transition-all duration-100"
+          className="h-full bg-reader-orp/70 transition-all duration-100"
           style={{ width: `${progress}%` }}
         />
       </div>
       
-      {/* Progress text */}
-      <div className="flex justify-between text-sm text-gray-400">
-        <span>{currentIndex + 1} / {totalTokens}</span>
-        <span>{Math.round(progress)}%</span>
-      </div>
-      
-      {/* Main controls */}
-      <div className="flex items-center justify-center gap-2">
-        <ControlButton onClick={onJumpBackward} title="Jump back 10 words (Shift+←)">
-          <SkipBack size={20} />
-        </ControlButton>
+      {/* Main controls row */}
+      <div className="flex items-center justify-between">
+        {/* Left: Progress text */}
+        <div className="text-xs text-reader-text-muted font-mono w-32">
+          {currentIndex + 1} / {totalTokens} ({Math.round(progress)}%)
+        </div>
         
-        <ControlButton onClick={onStepBackward} title="Step back 1 word (←)">
-          <ChevronLeft size={20} />
-        </ControlButton>
+        {/* Center: Playback controls */}
+        <div className="flex items-center gap-1">
+          <ControlButton onClick={onJumpBackward} title="Jump back 10 words (Shift+←)">
+            <SkipBack size={16} />
+          </ControlButton>
+          
+          <ControlButton onClick={onStepBackward} title="Step back 1 word (←)">
+            <ChevronLeft size={16} />
+          </ControlButton>
+          
+          <button
+            onClick={isPlaying ? onPause : onPlay}
+            className={clsx(
+              "w-12 h-12 rounded-full flex items-center justify-center transition-all",
+              "bg-reader-orp/80 hover:bg-reader-orp text-white",
+              "focus:outline-none focus:ring-2 focus:ring-reader-orp/50"
+            )}
+            title={isPlaying ? "Pause (Space)" : "Play (Space)"}
+          >
+            {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
+          </button>
+          
+          <ControlButton onClick={onStepForward} title="Step forward 1 word (→)">
+            <ChevronRight size={16} />
+          </ControlButton>
+          
+          <ControlButton onClick={onJumpForward} title="Jump forward 10 words (Shift+→)">
+            <SkipForward size={16} />
+          </ControlButton>
+        </div>
         
-        <button
-          onClick={isPlaying ? onPause : onPlay}
-          className={clsx(
-            "w-14 h-14 rounded-full flex items-center justify-center transition-all",
-            "bg-reader-orp hover:bg-red-500 text-white",
-            "focus:outline-none focus:ring-2 focus:ring-reader-orp focus:ring-offset-2 focus:ring-offset-gray-900"
-          )}
-          title={isPlaying ? "Pause (Space)" : "Play (Space)"}
-        >
-          {isPlaying ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
-        </button>
-        
-        <ControlButton onClick={onStepForward} title="Step forward 1 word (→)">
-          <ChevronRight size={20} />
-        </ControlButton>
-        
-        <ControlButton onClick={onJumpForward} title="Jump forward 10 words (Shift+→)">
-          <SkipForward size={20} />
-        </ControlButton>
-      </div>
-      
-      {/* Speed slider */}
-      <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-400 w-16">Speed</span>
-        <input
-          type="range"
-          min={WPM_MIN}
-          max={WPM_MAX}
-          step={WPM_STEP}
-          value={settings.wpm}
-          onChange={(e) => onWpmChange(parseInt(e.target.value, 10))}
-          className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-reader-orp"
-        />
-        <span className="text-sm font-mono text-white w-20 text-right">{settings.wpm} WPM</span>
-      </div>
-      
-      {/* Text size slider */}
-      <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-400 w-16 flex items-center gap-1">
-          <Type size={14} />
-          Size
-        </span>
-        <input
-          type="range"
-          min={32}
-          max={128}
-          step={4}
-          value={fontSize}
-          onChange={(e) => onFontSizeChange(parseInt(e.target.value, 10))}
-          className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-reader-orp"
-        />
-        <span className="text-sm font-mono text-white w-20 text-right">{fontSize}px</span>
-      </div>
-      
-      {/* Mode and toggles */}
-      <div className="flex items-center justify-between gap-4">
-        {/* Mode toggle */}
-        <div className="flex items-center gap-2">
+        {/* Right: Mode toggle */}
+        <div className="flex items-center gap-1 w-32 justify-end">
           <button
             onClick={() => onModeChange('autoplay')}
             className={clsx(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-all",
+              "flex items-center gap-1 px-2 py-1 rounded text-xs transition-all",
               settings.mode === 'autoplay' 
-                ? "bg-reader-orp text-white" 
-                : "bg-gray-800 text-gray-400 hover:text-white"
+                ? "bg-white/10 text-reader-text" 
+                : "text-reader-text-muted hover:text-reader-text"
             )}
             title="Autoplay mode"
           >
-            <Zap size={14} />
+            <Zap size={12} />
             Auto
           </button>
           <button
             onClick={() => onModeChange('hold-space')}
             className={clsx(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-all",
+              "flex items-center gap-1 px-2 py-1 rounded text-xs transition-all",
               settings.mode === 'hold-space' 
-                ? "bg-reader-orp text-white" 
-                : "bg-gray-800 text-gray-400 hover:text-white"
+                ? "bg-white/10 text-reader-text" 
+                : "text-reader-text-muted hover:text-reader-text"
             )}
-            title="Hold Space mode (deadman switch)"
+            title="Hold Space mode"
           >
-            <Hand size={14} />
+            <Hand size={12} />
             Hold
           </button>
+        </div>
+      </div>
+      
+      {/* Secondary controls row - sliders and toggles */}
+      <div className="flex items-center gap-6 text-xs">
+        {/* Speed slider */}
+        <div className="flex items-center gap-2 flex-1">
+          <span className="text-reader-text-muted">WPM</span>
+          <input
+            type="range"
+            min={WPM_MIN}
+            max={WPM_MAX}
+            step={WPM_STEP}
+            value={settings.wpm}
+            onChange={(e) => onWpmChange(parseInt(e.target.value, 10))}
+            className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-reader-orp"
+          />
+          <span className="text-reader-text font-mono w-12 text-right">{settings.wpm}</span>
+        </div>
+        
+        {/* Size slider */}
+        <div className="flex items-center gap-2 flex-1">
+          <Type size={12} className="text-reader-text-muted" />
+          <input
+            type="range"
+            min={32}
+            max={128}
+            step={4}
+            value={fontSize}
+            onChange={(e) => onFontSizeChange(parseInt(e.target.value, 10))}
+            className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-reader-orp"
+          />
+          <span className="text-reader-text font-mono w-10 text-right">{fontSize}</span>
         </div>
         
         {/* Toggles */}
@@ -173,8 +172,7 @@ export function Controls({
             onClick={() => onPunctuationPauseChange(!settings.punctuationPause)}
             title="Punctuation pause"
           >
-            <Settings size={14} />
-            <span>Punct</span>
+            <Settings size={10} />
           </ToggleButton>
           
           <ToggleButton
@@ -182,8 +180,7 @@ export function Controls({
             onClick={() => onSoftRewindChange(!settings.softRewind)}
             title="Soft rewind on resume"
           >
-            <RotateCcw size={14} />
-            <span>Rewind</span>
+            <RotateCcw size={10} />
           </ToggleButton>
         </div>
       </div>
@@ -204,9 +201,9 @@ function ControlButton({
     <button
       onClick={onClick}
       className={clsx(
-        "w-10 h-10 rounded-lg flex items-center justify-center transition-all",
-        "bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white",
-        "focus:outline-none focus:ring-2 focus:ring-reader-orp"
+        "w-8 h-8 rounded-lg flex items-center justify-center transition-all",
+        "text-reader-text-dim hover:text-reader-text hover:bg-white/5",
+        "focus:outline-none"
       )}
       title={title}
     >
@@ -230,10 +227,10 @@ function ToggleButton({
     <button
       onClick={onClick}
       className={clsx(
-        "flex items-center gap-1 px-2 py-1 rounded text-xs transition-all",
+        "w-6 h-6 rounded flex items-center justify-center transition-all",
         active 
-          ? "bg-gray-700 text-white" 
-          : "bg-gray-800/50 text-gray-500 hover:text-gray-300"
+          ? "bg-white/10 text-reader-text" 
+          : "text-reader-text-muted hover:text-reader-text"
       )}
       title={title}
     >

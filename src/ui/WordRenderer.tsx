@@ -51,40 +51,32 @@ export function WordRenderer({
   const translateX = anchorX - leftWidth - orpWidth / 2
   const tickX = anchorX
   
-  const tickHeight = 28
-  const lineOffset = 58
+  // Bracket dimensions - subtle visual guides
+  const bracketHeight = 24
+  const bracketGap = 8 // gap between bracket and text
+  const textHalfHeight = fontSize * 0.45 // approximate half-height of text
   
   return (
-    <div className="relative h-32 overflow-hidden" style={{ width: containerWidth }}>
-      {/* Top horizontal guide line */}
+    <div className="relative overflow-hidden" style={{ width: containerWidth, height: fontSize * 2 }}>
+      {/* Top bracket (vertical tick only - no horizontal line) */}
       <div 
-        className="absolute left-0 right-0 h-px bg-reader-guide"
-        style={{ top: `calc(50% - ${lineOffset}px)` }}
-      />
-      
-      {/* Bottom horizontal guide line */}
-      <div 
-        className="absolute left-0 right-0 h-px bg-reader-guide"
-        style={{ top: `calc(50% + ${lineOffset}px)` }}
-      />
-      
-      {/* Top vertical tick (goes DOWN from top line toward text) */}
-      <div 
-        className="absolute w-px bg-reader-guide"
+        className="absolute w-px bg-reader-guide transition-opacity duration-300"
         style={{ 
           left: tickX,
-          top: `calc(50% - ${lineOffset}px)`,
-          height: tickHeight,
+          top: `calc(50% - ${textHalfHeight + bracketGap + bracketHeight}px)`,
+          height: bracketHeight,
+          opacity: 0.6,
         }}
       />
       
-      {/* Bottom vertical tick (goes UP from bottom line toward text) */}
+      {/* Bottom bracket (vertical tick only - no horizontal line) */}
       <div 
-        className="absolute w-px bg-reader-guide"
+        className="absolute w-px bg-reader-guide transition-opacity duration-300"
         style={{ 
           left: tickX,
-          top: `calc(50% + ${lineOffset}px - ${tickHeight}px)`,
-          height: tickHeight,
+          top: `calc(50% + ${textHalfHeight + bracketGap}px)`,
+          height: bracketHeight,
+          opacity: 0.6,
         }}
       />
       
@@ -96,6 +88,7 @@ export function WordRenderer({
           fontSize,
           fontFamily,
           fontWeight: 500,
+          letterSpacing: '0.01em',
         }}
       >
         <span className="text-reader-text">{left}</span>
