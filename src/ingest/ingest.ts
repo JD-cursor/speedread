@@ -1,7 +1,7 @@
 import { createDocument } from '../storage/documentsRepo'
 import type { Document } from '../core/types'
 
-export type FileFormat = 'pdf' | 'docx' | 'epub'
+export type FileFormat = 'pdf' | 'docx' | 'epub' | 'txt'
 
 export function detectFormat(filename: string): FileFormat | null {
   const ext = filename.toLowerCase().split('.').pop()
@@ -15,6 +15,15 @@ export function detectFormat(filename: string): FileFormat | null {
     default:
       return null
   }
+}
+
+export async function ingestText(text: string, title?: string): Promise<Document> {
+  if (!text || text.trim().length === 0) {
+    throw new Error('No text content provided')
+  }
+  
+  const documentTitle = title || `Pasted Text - ${new Date().toLocaleString()}`
+  return createDocument(documentTitle, 'txt', text)
 }
 
 export async function ingestFile(file: File): Promise<Document> {

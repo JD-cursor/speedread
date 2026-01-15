@@ -5,7 +5,7 @@ import { tokenize } from '../core/tokenizer'
 
 export async function createDocument(
   filename: string,
-  format: 'pdf' | 'docx' | 'epub',
+  format: 'pdf' | 'docx' | 'epub' | 'txt',
   rawText: string
 ): Promise<Document> {
   const { fullText, tokens } = tokenize(rawText)

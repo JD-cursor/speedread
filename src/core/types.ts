@@ -28,7 +28,7 @@ export interface Document {
   id: string
   title: string
   filename: string
-  format: 'pdf' | 'docx' | 'epub'
+  format: 'pdf' | 'docx' | 'epub' | 'txt'
   fullText: string
   tokens: Token[]
   createdAt: number

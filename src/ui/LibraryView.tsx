@@ -11,7 +11,8 @@ import {
   Clock,
   Edit2,
   Check,
-  X
+  X,
+  ClipboardPaste
 } from 'lucide-react'
 import { 
   getAllDocuments, 
@@ -22,7 +23,7 @@ import {
 } from '../storage/documentsRepo'
 import { db } from '../storage/db'
 import { Document, ReadingProgress } from '../core/types'
-import { ingestFile } from '../ingest/ingest'
+import { ingestFile, ingestText } from '../ingest/ingest'
 import clsx from 'clsx'
 
 export function LibraryView() {
@@ -34,6 +35,9 @@ export function LibraryView() {
   const [importError, setImportError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editTitle, setEditTitle] = useState('')
+  const [showPasteModal, setShowPasteModal] = useState(false)
+  const [pasteText, setPasteText] = useState('')
+  const [pasteTitle, setPasteTitle] = useState('')
   
   const documents = useLiveQuery(() => getAllDocuments(), [])
   
@@ -130,6 +134,27 @@ export function LibraryView() {
     setEditTitle('')
   }, [])
   
+  const handlePasteText = useCallback(async () => {
+    if (!pasteText.trim()) {
+      setImportError('Please enter some text')
+      return
+    }
+    
+    setImporting(true)
+    setImportError(null)
+    
+    try {
+      await ingestText(pasteText, pasteTitle.trim() || undefined)
+      setShowPasteModal(false)
+      setPasteText('')
+      setPasteTitle('')
+    } catch (err) {
+      setImportError(err instanceof Error ? err.message : 'Failed to import text')
+    } finally {
+      setImporting(false)
+    }
+  }, [pasteText, pasteTitle])
+  
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleDateString(undefined, {
       year: 'numeric',
@@ -172,6 +197,20 @@ export function LibraryView() {
               Export
             </button>
             <button
+              onClick={() => setShowPasteModal(true)}
+              disabled={importing}
+              className={clsx(
+                "flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm",
+                importing 
+                  ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-800 hover:bg-gray-700 text-white"
+              )}
+              title="Paste text"
+            >
+              <ClipboardPaste size={16} />
+              Paste Text
+            </button>
+            <button
               onClick={() => fileInputRef.current?.click()}
               disabled={importing}
               className={clsx(
@@ -208,6 +247,65 @@ export function LibraryView() {
         {importError && (
           <div className="mb-4 p-4 bg-red-900/30 border border-red-800 rounded-lg text-red-300">
             {importError}
+          </div>
+        )}
+        
+        {/* Paste Text Modal */}
+        {showPasteModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowPasteModal(false)}>
+            <div className="bg-gray-900 rounded-xl p-6 max-w-2xl w-full mx-4 border border-gray-800" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-xl font-bold mb-4">Paste Text</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Title (optional)</label>
+                  <input
+                    type="text"
+                    value={pasteTitle}
+                    onChange={(e) => setPasteTitle(e.target.value)}
+                    placeholder="Enter a title for this text..."
+                    className="w-full bg-gray-800 px-4 py-2 rounded-lg border border-gray-700 focus:border-reader-orp focus:outline-none"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Text</label>
+                  <textarea
+                    value={pasteText}
+                    onChange={(e) => setPasteText(e.target.value)}
+                    placeholder="Paste your text here..."
+                    rows={12}
+                    className="w-full bg-gray-800 px-4 py-2 rounded-lg border border-gray-700 focus:border-reader-orp focus:outline-none resize-none"
+                    autoFocus
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-end gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowPasteModal(false)
+                    setPasteText('')
+                    setPasteTitle('')
+                  }}
+                  className="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePasteText}
+                  disabled={!pasteText.trim() || importing}
+                  className={clsx(
+                    "px-4 py-2 rounded-lg transition-colors font-medium",
+                    !pasteText.trim() || importing
+                      ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                      : "bg-reader-orp hover:bg-red-500 text-white"
+                  )}
+                >
+                  {importing ? 'Adding...' : 'Add to Library'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
         
