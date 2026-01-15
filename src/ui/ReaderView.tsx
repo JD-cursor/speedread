@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Share2, BookOpen } from 'lucide-react'
+import { ArrowLeft, Share2, BookOpen, Maximize, Minimize } from 'lucide-react'
 import { WordRenderer } from './WordRenderer'
 import { Controls } from './Controls'
 import { PagePane } from './PagePane'
@@ -18,6 +18,8 @@ export function ReaderView() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showPagePane, setShowPagePane] = useState(true)
+  const [fontSize, setFontSize] = useState(64)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   
   const initialPosition = useMemo(() => {
     const pos = searchParams.get('pos')
@@ -109,6 +111,25 @@ export function ReaderView() {
     alert('Share link copied to clipboard!\n\nNote: This link only works on devices that have this document in their library.')
   }, [documentId, state])
   
+  const toggleFullscreen = useCallback(() => {
+    if (!window.document.fullscreenElement) {
+      window.document.documentElement.requestFullscreen()
+      setIsFullscreen(true)
+    } else {
+      window.document.exitFullscreen()
+      setIsFullscreen(false)
+    }
+  }, [])
+  
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!window.document.fullscreenElement)
+    }
+    
+    window.document.addEventListener('fullscreenchange', handleFullscreenChange)
+    return () => window.document.removeEventListener('fullscreenchange', handleFullscreenChange)
+  }, [])
+  
   useKeyboardShortcuts({
     mode: state?.settings.mode ?? 'autoplay',
     onTogglePlayPause: togglePlayPause,
@@ -121,6 +142,7 @@ export function ReaderView() {
     onWpmUp: () => adjustWpm(50),
     onWpmDown: () => adjustWpm(-50),
     onEscape: handleBack,
+    onToggleFullscreen: toggleFullscreen,
   })
   
   if (loading) {
@@ -172,6 +194,13 @@ export function ReaderView() {
             <Share2 size={18} />
           </button>
           <button
+            onClick={toggleFullscreen}
+            className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+            title="Toggle fullscreen (F)"
+          >
+            {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+          </button>
+          <button
             onClick={() => setShowPagePane(!showPagePane)}
             className={`p-2 rounded-lg transition-colors ${showPagePane ? 'bg-gray-800' : 'hover:bg-gray-800'}`}
             title="Toggle page pane"
@@ -187,7 +216,7 @@ export function ReaderView() {
         <div className={`flex-1 flex flex-col ${showPagePane ? 'border-r border-gray-800' : ''}`}>
           {/* Word display area */}
           <div className="flex-1 flex items-center justify-center bg-reader-bg">
-            <WordRenderer token={currentToken} />
+            <WordRenderer token={currentToken} fontSize={fontSize} />
           </div>
           
           {/* Controls */}
@@ -197,6 +226,7 @@ export function ReaderView() {
               settings={state.settings}
               currentIndex={state.currentIndex}
               totalTokens={tokens.length}
+              fontSize={fontSize}
               onPlay={play}
               onPause={pause}
               onStepForward={() => stepForward(1)}
@@ -207,6 +237,7 @@ export function ReaderView() {
               onModeChange={setMode}
               onPunctuationPauseChange={setPunctuationPause}
               onSoftRewindChange={setSoftRewind}
+              onFontSizeChange={setFontSize}
             />
           </div>
         </div>

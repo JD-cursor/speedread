@@ -8,7 +8,8 @@ import {
   Hand,
   Zap,
   RotateCcw,
-  Settings
+  Settings,
+  Type
 } from 'lucide-react'
 import { ReaderSettings, ReadingMode, ReaderState, WPM_MIN, WPM_MAX, WPM_STEP } from '../core/types'
 import clsx from 'clsx'
@@ -18,6 +19,7 @@ interface ControlsProps {
   settings: ReaderSettings
   currentIndex: number
   totalTokens: number
+  fontSize: number
   onPlay: () => void
   onPause: () => void
   onStepForward: () => void
@@ -28,6 +30,7 @@ interface ControlsProps {
   onModeChange: (mode: ReadingMode) => void
   onPunctuationPauseChange: (enabled: boolean) => void
   onSoftRewindChange: (enabled: boolean) => void
+  onFontSizeChange: (size: number) => void
 }
 
 export function Controls({
@@ -35,6 +38,7 @@ export function Controls({
   settings,
   currentIndex,
   totalTokens,
+  fontSize,
   onPlay,
   onPause,
   onStepForward,
@@ -45,6 +49,7 @@ export function Controls({
   onModeChange,
   onPunctuationPauseChange,
   onSoftRewindChange,
+  onFontSizeChange,
 }: ControlsProps) {
   const isPlaying = state === 'playing'
   const progress = totalTokens > 0 ? ((currentIndex + 1) / totalTokens) * 100 : 0
@@ -109,6 +114,24 @@ export function Controls({
           className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-reader-orp"
         />
         <span className="text-sm font-mono text-white w-20 text-right">{settings.wpm} WPM</span>
+      </div>
+      
+      {/* Text size slider */}
+      <div className="flex items-center gap-4">
+        <span className="text-sm text-gray-400 w-16 flex items-center gap-1">
+          <Type size={14} />
+          Size
+        </span>
+        <input
+          type="range"
+          min={32}
+          max={128}
+          step={4}
+          value={fontSize}
+          onChange={(e) => onFontSizeChange(parseInt(e.target.value, 10))}
+          className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-reader-orp"
+        />
+        <span className="text-sm font-mono text-white w-20 text-right">{fontSize}px</span>
       </div>
       
       {/* Mode and toggles */}

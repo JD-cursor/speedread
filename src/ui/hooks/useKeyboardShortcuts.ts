@@ -13,6 +13,7 @@ interface KeyboardShortcutsConfig {
   onWpmUp: () => void
   onWpmDown: () => void
   onEscape: () => void
+  onToggleFullscreen?: () => void
 }
 
 export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
@@ -70,6 +71,13 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
         case 'Escape':
           e.preventDefault()
           config.onEscape()
+          break
+          
+        case 'KeyF':
+          if (config.onToggleFullscreen) {
+            e.preventDefault()
+            config.onToggleFullscreen()
+          }
           break
       }
     }
