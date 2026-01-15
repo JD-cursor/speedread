@@ -30,3 +30,12 @@ body {
   background-color: rgba(184, 92, 92, 0.3);
   color: #ffffff;
 }
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

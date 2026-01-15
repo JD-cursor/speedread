@@ -9,8 +9,8 @@ interface TextFlowProps {
 
 // Number of visible lines in the text flow window
 const VISIBLE_LINES = 10
-// Words per line for text wrapping
-const WORDS_PER_LINE = 8
+// Words per line for text wrapping - more organic, longer lines
+const WORDS_PER_LINE = 12
 // Line height in pixels
 const LINE_HEIGHT = 36
 // Animation duration for smooth transitions
@@ -112,15 +112,17 @@ export function TextFlow({ tokens, currentIndex, onSeek }: TextFlowProps) {
   
   return (
     <div 
-      className="h-full flex items-center justify-center overflow-hidden"
+      className="h-full flex items-center overflow-hidden"
       style={{ 
         // Subtle gradient masks at top and bottom for fade effect
         maskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)',
         WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)',
+        // Move container toward center (away from right edge)
+        marginRight: '15%',
       }}
     >
       <div 
-        className="relative w-full max-w-lg px-6"
+        className="relative w-full"
         style={{ height: containerHeight }}
       >
         {visibleLines.map((line, idx) => {
@@ -132,7 +134,7 @@ export function TextFlow({ tokens, currentIndex, onSeek }: TextFlowProps) {
           return (
             <div
               key={`line-${lineIndex}`}
-              className="absolute left-0 right-0 px-6 flex items-center justify-center gap-2 select-none"
+              className="absolute left-0 right-0 px-4 flex items-center gap-2 select-none overflow-x-auto scrollbar-hide"
               style={{
                 height: LINE_HEIGHT,
                 top: '50%',

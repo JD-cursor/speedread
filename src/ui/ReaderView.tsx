@@ -247,14 +247,7 @@ export function ReaderView() {
               fontSize={fontSize}
               onPlay={play}
               onPause={pause}
-              onStepForward={() => stepForward(1)}
-              onStepBackward={() => stepBackward(1)}
-              onJumpForward={() => stepForward(10)}
-              onJumpBackward={() => stepBackward(10)}
-              onWpmChange={setWpm}
               onModeChange={setMode}
-              onPunctuationPauseChange={setPunctuationPause}
-              onSoftRewindChange={setSoftRewind}
               onFontSizeChange={setFontSize}
             />
           </div>
