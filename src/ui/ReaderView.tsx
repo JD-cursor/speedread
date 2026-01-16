@@ -219,7 +219,7 @@ export function ReaderView() {
         </div>
         
         {/* Right side: Text flow - Star Wars crawl style */}
-        <div className="w-[400px] flex-shrink-0">
+        <div className="w-[800px] flex-shrink-0">
           <TextFlow
             tokens={tokens}
             currentIndex={state.currentIndex}

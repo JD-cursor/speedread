@@ -12,7 +12,7 @@ const VISIBLE_LINES = 10
 // Words per line for text wrapping - more organic, longer lines
 const WORDS_PER_LINE = 12
 // Line height in pixels
-const LINE_HEIGHT = 36
+const LINE_HEIGHT = 48
 // Animation duration for smooth transitions
 const TRANSITION_DURATION = 300
 
@@ -112,7 +112,7 @@ export function TextFlow({ tokens, currentIndex, onSeek }: TextFlowProps) {
   
   return (
     <div 
-      className="h-full flex items-center overflow-hidden"
+      className="h-full flex items-center"
       style={{ 
         // Subtle gradient masks at top and bottom for fade effect
         maskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)',
@@ -134,9 +134,9 @@ export function TextFlow({ tokens, currentIndex, onSeek }: TextFlowProps) {
           return (
             <div
               key={`line-${lineIndex}`}
-              className="absolute left-0 right-0 px-4 flex items-center gap-2 select-none overflow-x-auto scrollbar-hide"
+              className="absolute left-0 right-0 px-4 flex flex-wrap justify-center items-center gap-2 select-none"
               style={{
-                height: LINE_HEIGHT,
+                minHeight: LINE_HEIGHT,
                 top: '50%',
                 transform: `translateY(${transformY}px)`,
                 opacity,
@@ -155,7 +155,7 @@ export function TextFlow({ tokens, currentIndex, onSeek }: TextFlowProps) {
                     onClick={() => handleLineClick(lineIndex, wordIdx)}
                     className="cursor-pointer transition-colors duration-150 font-reader"
                     style={{
-                      fontSize: isCurrentLine ? '18px' : '16px',
+                      fontSize: '16px',
                       color: isCurrentWord 
                         ? '#b85c5c' // reader-orp
                         : isCurrentLine 
