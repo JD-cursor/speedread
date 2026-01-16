@@ -40,10 +40,7 @@ export function ReaderView() {
     stepBackward,
     seekTo,
     adjustWpm,
-    setWpm,
     setMode,
-    setPunctuationPause,
-    setSoftRewind,
     updateSettings,
   } = useReaderEngine(tokens, initialPosition)
   
