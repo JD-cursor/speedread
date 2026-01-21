@@ -294,6 +294,18 @@ export function LibraryView() {
                 </button>
               </div>
             </div>
+            
+            {/* Keyboard shortcuts help */}
+            <div className="mt-12 p-4 bg-gray-900/30 rounded-xl">
+              <h3 className="text-sm font-medium text-gray-400 mb-3">Keyboard Shortcuts (in Reader)</h3>
+              <div className="grid grid-cols-2 gap-2 text-sm text-gray-500">
+                <div><kbd className="px-2 py-0.5 bg-gray-800 rounded">Space</kbd> Play/Pause or Hold to read</div>
+                <div><kbd className="px-2 py-0.5 bg-gray-800 rounded">←</kbd> <kbd className="px-2 py-0.5 bg-gray-800 rounded">→</kbd> Step word</div>
+                <div><kbd className="px-2 py-0.5 bg-gray-800 rounded">Shift</kbd>+<kbd className="px-2 py-0.5 bg-gray-800 rounded">←</kbd> <kbd className="px-2 py-0.5 bg-gray-800 rounded">→</kbd> Jump 10 words</div>
+                <div><kbd className="px-2 py-0.5 bg-gray-800 rounded">↑</kbd> <kbd className="px-2 py-0.5 bg-gray-800 rounded">↓</kbd> Adjust speed</div>
+                <div><kbd className="px-2 py-0.5 bg-gray-800 rounded">Esc</kbd> Back to library</div>
+              </div>
+            </div>
           </div>
         )}
         
